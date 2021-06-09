@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Document</title>
+   <style>
+      #box {
+         width: 500px;
+         height: 400px;
+         margin: 0 auto;
+         background-color: orange;
+      }
+   </style>
+</head>
+
+<body>
+   <div id="box">
+      <input type="text" id="phonenum" placeholder="手机号">
+      <input type="text" id="checknum" placeholder="验证码">
+      <button id="check">发送验证码</button>
+      <button id="up">登录</button>
+   </div>
+</body>
+<script src="./jquery-3.6.0.min.js"></script>
+<script>
+   // 获取手机号
+   var phonenum = 0;
+   $('#phonenum').change(
+      function () {
+         phonenum = $(this).val()
+         console.log('手机', phonenum);
+      }
+   )
+
+   // 验证码验证
+   var check = 0;
+   $('#checknum').change(
+      function () {
+         check = $(this).val()
+         console.log('验证', check);
+      }
+   )
+
+   $('#check').click(
+      function () {
+         var n = new XMLHttpRequest;
+         n.open('get', `https://autumnfish.cn/captcha/sent?phone=${phonenum}`)
+         n.send();
+         n.onreadystatechange = function () {
+            if (n.readyState == 4 || n.readyState == 200) {
+               let data = JSON.parse(n.responseText)
+               console.log(data);
+            }
+
+         }
+      }
+   )
+
+
+
+
+   // 登录和验证验证码
+   $('#up').click(function () {
+      console.log(check);
+      var n = new XMLHttpRequest;
+      n.open('get', `https://autumnfish.cn//captcha/verify?phone=${phonenum}&captcha=${check}`)
+      n.send();
+      n.onreadystatechange = function () {
+         if (n.readyState == 4 || n.readyState == 200) {
+            let data = JSON.parse(n.responseText)
+            console.log(data);
+            if (data.code == 503) {
+               alert(data.message)
+            }
+            if (data.code == 200) {
+               alert('成功注册')
+            }
+         }
+
+      }
+   })
+
+</script>
+
+</html>
